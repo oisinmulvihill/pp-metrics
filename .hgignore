@@ -1,0 +1,10 @@
+build
+dist
+pyenv
+.coverage
+syntax: glob
+*.log
+*~
+*.egg-info*
+*.pyc
+*.db
