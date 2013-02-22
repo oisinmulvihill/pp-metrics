@@ -3,13 +3,16 @@
 This initialises the GraphitePeriodicPusher to send stats to the graphite
 service.
 
+PythonPro Limited
+2013-02-22
+
 """
 import logging
 
 from greplin.scales.graphite import GraphitePeriodicPusher
 
 
-_metrics = list()
+_graphitepusher = list()
 
 
 def init(config={}):
@@ -40,25 +43,20 @@ def init(config={}):
         log.warn("Metrics are disabled (metrics.enabled = 'no').")
         return
 
-    host = config.get("metrics.host", 'localhost')
-    port = int(config.get("metrics.port", 2003))
-    prefix = config.get("metrics.prefix", 'api.audience')
-    period = float(config.get("metrics.period", 60))
-    allow = config.get("metrics.allow", '*')
-
     d = dict(
-        host=host,
-        port=port,
-        prefix=prefix,
-        period=period,
-        allow=allow
+        host=config.get("metrics.host", 'localhost'),
+        port=int(config.get("metrics.port", 2003)),
+        prefix=config.get("metrics.prefix", 'api.audience'),
+        period=float(config.get("metrics.period", 60)),
+        allow=config.get("metrics.allow", '*'),
     )
     log.info((
         "GraphitePeriodicPusher configuration = "
         "host:{host} port:{port} prefix:'{prefix}' period:{period}"
     ).format(**d))
 
-    g = GraphitePeriodicPusher(host, port, prefix, period)
-    g.allow(allow)
+    g = GraphitePeriodicPusher(d['host'], d['port'], d['prefix'], d['period'])
+    g.allow(d['allow'])
     g.start()
-    _metrics.append(g)
+
+    _graphitepusher.append(g)
